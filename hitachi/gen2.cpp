@@ -1,7 +1,5 @@
-#include<vector>
-#include<iostream>
-#include<algorithm>
-#include <random>
+#include <atcoder/all>
+#include <bits/stdc++.h>
 using namespace std;
 
 int kings[400][400][4];
@@ -25,7 +23,8 @@ int dy(int k){
   else return 1;
 }
 
-void genjson(){
+void genjson(string path){
+  ofstream st(path);
   int li=1000,lj,lk;
   for(int i=383;i>=0;i--) for(int j=383;j>=0;j--) for(int k=3;k>=0;k--){
     if(valid(i,j,k) && kings[i][j][k]!=0){
@@ -36,9 +35,9 @@ void genjson(){
 
   for(int i=0;i<384;i++) for(int j=0;j<384;j++) for(int k=0;k<4;k++){
     if(valid(i,j,k) && kings[i][j][k]!=0){
-      cout << "[" << i << "," << j << "," << i + dx(k) << "," << j+dy(k) << "," << kings[i][j][k] << "]";
-      if(li!=i || lj!=j || lk!=k) cout << ",";
-      cout << endl;
+      st << "[" << i << "," << j << "," << i + dx(k) << "," << j+dy(k) << "," << kings[i][j][k] << "]";
+      if(li!=i || lj!=j || lk!=k) st << ",";
+      st << endl;
     }
   }
 }
@@ -64,7 +63,7 @@ void tbox(int s){
 }
 
 void rnderase(int s, int er){
-  random_device rnd;
+  std::mt19937 rnd(111);
   int cnt = 0;
   while(er > cnt){
     int i = rnd() % 384, j = rnd() % 384, k = rnd() % 3 + 1;
@@ -77,6 +76,24 @@ void rnderase(int s, int er){
   }
 }
 
+int toid(int i,int j,int k){
+  return (i+dx(k))*384 + (j+dy(k));
+}
+
+int mincut(){
+  atcoder::mf_graph<int> g(384*384);
+  for(int i=0;i<384;i++) for(int j=0;j<384;j++) for(int k=1;k<4;k++){
+    int id = 384*i + j;
+    if(valid(i,j,k) && kings[i][j][k] == -7) g.add_edge(id, toid(i,j,k), 10000000);
+    if(valid(i,j,k) && kings[i][j][k] == -1){
+      g.add_edge(id, toid(i,j,k), 1);
+      g.add_edge(toid(i,j,k), id, 1);
+    }
+  }
+  return g.flow(0, 384*384-1);
+}
+
+
 int main(){
   int numedge = 320922;
   for(int i=0;i<400; i++) for(int j=0;j<400;j++) for(int k=0;k<4;k++){
@@ -87,7 +104,8 @@ int main(){
   for(int i=0;i<400; i++) for(int j=0;j<400;j++) for(int k=0;k<3;k++){
     kings[i][j][k+1] = -1;
   }
-  random_device rnd;
+
+  std::mt19937 rnd(111);
   int per; cin >> per;
   int er = ((100-per)*320922) / 100;
   kings[0][0][0] = -7;
@@ -95,7 +113,21 @@ int main(){
   sbox(5);
   tbox(5);
   rnderase(5,er);
-  genjson();
+  // mincut part
+  genjson("./testdata/mincut/graph/mincgraph_" + to_string(per));
+  ofstream mincut_solution_stream("./testdata/mincut/solution/mincsol_" + to_string(per));
+  mincut_solution_stream << mincut() << endl;
+
+  //maxcut part
+  for(int i=0;i<400; i++) for(int j=0;j<400;j++) {
+    kings[i][j][0] = 0;
+  }
+  for(int i=0;i<400; i++) for(int j=0;j<400;j++) for(int k=1;k<4;k++){
+    if(kings[i][j][k]==-1) kings[i][j][k] = 1;
+  }
+  genjson("./testdata/maxcut/graph/maxcgraph_" + to_string(per));
+
+  cout << "done" << endl;
   return 0;
 }
 
