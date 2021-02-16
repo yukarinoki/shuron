@@ -1,0 +1,7 @@
+  },
+  "outputs": {
+    "spins": false,
+    "averaged_spins": false,
+    "averaged_energy": false
+  }
+}

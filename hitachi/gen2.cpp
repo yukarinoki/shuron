@@ -53,7 +53,7 @@ void sbox(int s){
 }
 
 void tbox(int s){
-  for(int i=384-s; i<384;i++) for(int j=384-s;j<384-s;j++){
+  for(int i=384-s; i<384;i++) for(int j=384-s;j<384;j++){
     kings[i][j][0] = +7;
   }
 
@@ -93,6 +93,36 @@ int mincut(){
   return g.flow(0, 384*384-1);
 }
 
+void  genformated_graph(string path){
+  ofstream st(path);
+  int li=1000,lj,lk;
+  int edgec = 0;
+  int vertexc = 384*384;
+  for(int i=0;i<384;i++) for(int j=0;j<=384;j++) for(int k=1;k<4;k++){
+    if(valid(i,j,k) && kings[i][j][k]!=0){
+      edgec++;
+    }
+  }
+
+  st << vertexc << " " << edgec << endl;
+
+  for(int i=0;i<384;i++) for(int j=0;j<384;j++) for(int k=0;k<4;k++){
+    if(valid(i,j,k) && kings[i][j][k]!=0){
+      int id1 = 384*i + j;
+      int id2 = 384*(i+dx(k)) + j+dy(k);
+      st << id1 << " " << id2 << kings[i][j][k] << endl;;
+    }
+  }
+}
+
+int energy(){
+  int e = 0;
+  for(int i=0;i<384;i++) for(int j=0;j<384;j++) for(int k=0;k<4;k++){
+    if(valid(i,j,k) && kings[i][j][k] != 0)  e += -abs(kings[i][j][k]);
+  }
+  return e;
+}
+
 
 int main(){
   int numedge = 320922;
@@ -116,7 +146,11 @@ int main(){
   // mincut part
   genjson("./testdata/mincut/graph/mincgraph_" + to_string(per));
   ofstream mincut_solution_stream("./testdata/mincut/solution/mincsol_" + to_string(per));
-  mincut_solution_stream << mincut() << endl;
+  int mc = mincut();
+  mincut_solution_stream << mc << endl;
+  
+  ofstream mincut_energy_stream("./testdata/mincut/energy/mincenergy_" + to_string(per));
+  mincut_energy_stream << energy() + 2*mc << endl;
 
   //maxcut part
   for(int i=0;i<400; i++) for(int j=0;j<400;j++) {
@@ -126,6 +160,7 @@ int main(){
     if(kings[i][j][k]==-1) kings[i][j][k] = 1;
   }
   genjson("./testdata/maxcut/graph/maxcgraph_" + to_string(per));
+  genformated_graph("./testdata/maxcut/formated_graph/maxcformatedgraph_" + to_string(per));
 
   cout << "done" << endl;
   return 0;
