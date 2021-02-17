@@ -1,6 +1,7 @@
-. makemincsv.sh
+rm result_*
+bash makemincsv.sh
 echo minisdone
-. makemax50csv.sh
+bash makemax50csv.sh
 echo minisdone50
-. makemax100csv.sh
+bash makemax100csv.sh
 echo maxisdone100

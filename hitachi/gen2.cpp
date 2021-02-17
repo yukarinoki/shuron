@@ -86,7 +86,10 @@ int mincut(){
   atcoder::mf_graph<int> g(384*384);
   for(int i=0;i<384;i++) for(int j=0;j<384;j++) for(int k=1;k<5;k++){
     int id = 384*i + j;
-    if(valid(i,j,k) && kings[i][j][k] == -7) g.add_edge(id, toid(i,j,k), 10000000);
+    if(valid(i,j,k) && kings[i][j][k] == -7){
+      g.add_edge(id, toid(i,j,k), 10000000);
+      g.add_edge(toid(i,j,k), id, 10000000);
+    }
     if(valid(i,j,k) && kings[i][j][k] == -1){
       g.add_edge(id, toid(i,j,k), 1);
       g.add_edge(toid(i,j,k), id, 1);
@@ -168,7 +171,7 @@ int main(){
 
   // maxcut part 50% positive 50% negative
   for(int i=0;i<400; i++) for(int j=0;j<400;j++) for(int k=1;k<5;k++){
-    if(kings[i][j][k]==-1 && (rnd()%2)==1) kings[i][j][k] = 1;
+    if(kings[i][j][k]==1 && (rnd()%2)==1) kings[i][j][k] = 1;
   }
   genjson("./testdata/maxcut/graph_50/maxcgraph_" + to_string(per));
   genformated_graph("./testdata/maxcut/formated_graph50/maxcformatedgraph_" + to_string(per));
