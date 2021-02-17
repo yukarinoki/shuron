@@ -171,7 +171,7 @@ int main(){
 
   // maxcut part 50% positive 50% negative
   for(int i=0;i<400; i++) for(int j=0;j<400;j++) for(int k=1;k<5;k++){
-    if(kings[i][j][k]==1 && (rnd()%2)==1) kings[i][j][k] = 1;
+    if(kings[i][j][k]==1 && (rnd()%2)==1) kings[i][j][k] = -1;
   }
   genjson("./testdata/maxcut/graph_50/maxcgraph_" + to_string(per));
   genformated_graph("./testdata/maxcut/formated_graph50/maxcformatedgraph_" + to_string(per));
