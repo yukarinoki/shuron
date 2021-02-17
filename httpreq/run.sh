@@ -1,4 +1,6 @@
 . makemincsv.sh
 echo minisdone
-. makemaxcsv.sh
-echo maxisdone
+. makemax50csv.sh
+echo minisdone50
+. makemax100csv.sh
+echo maxisdone100
